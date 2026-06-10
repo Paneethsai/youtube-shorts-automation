@@ -21,7 +21,7 @@ def run_shorts_job():
     logger.info("Executing scheduled daily Shorts video creation job...")
     pipeline = AutomationPipeline()
     try:
-        privacy = os.getenv("PRIVACY_STATUS", "private")
+        privacy = os.getenv("PRIVACY_STATUS", "public")
         # Upload using the configured privacy status
         success = pipeline.run_pipeline(privacy_status=privacy, format_type="short")
         if success:
@@ -35,7 +35,7 @@ def run_long_job():
     logger.info("Executing scheduled daily Long-form video creation job...")
     pipeline = AutomationPipeline()
     try:
-        privacy = os.getenv("PRIVACY_STATUS", "private")
+        privacy = os.getenv("PRIVACY_STATUS", "public")
         # Upload using the configured privacy status
         success = pipeline.run_pipeline(privacy_status=privacy, format_type="long")
         if success:
