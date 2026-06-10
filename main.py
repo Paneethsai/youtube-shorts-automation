@@ -38,6 +38,30 @@ class AutomationPipeline:
         self.video_builder = VideoBuilder()
         self.uploader = YoutubeUploader()
 
+    def normalize_topic(self, topic: str) -> str:
+        """Helper to normalize a topic string for history matching."""
+        return "".join(c for c in topic.lower() if c.isalnum())
+
+    def load_used_topics(self) -> set:
+        """Loads a list of already processed topics."""
+        used_path = config.BASE_DIR / "used_topics.txt"
+        if used_path.exists():
+            try:
+                with open(used_path, "r", encoding="utf-8") as f:
+                    return {line.strip() for line in f if line.strip()}
+            except Exception as e:
+                logger.warning(f"Failed to load used topics: {e}")
+        return set()
+
+    def save_used_topic(self, topic: str):
+        """Saves a topic to the history of processed topics."""
+        used_path = config.BASE_DIR / "used_topics.txt"
+        try:
+            with open(used_path, "a", encoding="utf-8") as f:
+                f.write(f"{topic}\n")
+        except Exception as e:
+            logger.warning(f"Failed to save used topic: {e}")
+
     def run_pipeline(self, target_topic: str = None, privacy_status: str = "private", format_type: str = "short") -> bool:
         """
         Runs the full video automation pipeline:
@@ -73,16 +97,37 @@ class AutomationPipeline:
             if not target_topic:
                 logger.info("Discovering trending topics...")
                 trends = self.trend_finder.get_combined_trends()
+                used_topics = self.load_used_topics()
+                normalized_used = {self.normalize_topic(t) for t in used_topics}
+                
+                selected_trend = None
                 if trends:
-                    # Select the top trend
-                    selected_trend = trends[0]
-                    target_topic = selected_trend["title"]
-                    logger.info(f"Selected trend topic: '{target_topic}' (Source: {selected_trend['source']})")
+                    for trend in trends:
+                        norm_title = self.normalize_topic(trend["title"])
+                        if norm_title not in normalized_used:
+                            selected_trend = trend
+                            break
+                    
+                    if selected_trend:
+                        target_topic = selected_trend["title"]
+                        logger.info(f"Selected new trend topic: '{target_topic}' (Source: {selected_trend['source']})")
+                    else:
+                        target_topic = config.NICHE
+                        logger.warning("All discovered trending topics have already been used. Falling back to niche.")
                 else:
                     target_topic = config.NICHE
-                    logger.warning(f"No trends found. Falling back to default niche: '{target_topic}'")
+                    logger.warning("No trends found. Falling back to niche.")
+                
+                # Make fallback niche unique by appending the current date
+                if target_topic == config.NICHE:
+                    date_str = datetime.now().strftime("%B %d, %Y")
+                    target_topic = f"{config.NICHE} for {date_str}"
+                    logger.info(f"Using unique daily niche topic: '{target_topic}'")
             else:
                 logger.info(f"Using user-defined topic: '{target_topic}'")
+
+            # Save the topic to our history so we don't repeat it
+            self.save_used_topic(target_topic)
 
             # Step 2: Script Writing
             logger.info("Writing script and SEO metadata...")

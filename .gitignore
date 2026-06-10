@@ -13,6 +13,12 @@ pickled_credentials.db
 temp/
 output/
 logs/*.log
+used_topics.txt
+
+# Piper executable & models (OS-specific and large binaries)
+assets/piper/
+assets/en_US-lessac-medium.onnx
+assets/en_US-lessac-medium.onnx.json
 
 # Python cache files
 __pycache__/

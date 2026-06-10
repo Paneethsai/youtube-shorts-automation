@@ -86,25 +86,27 @@ class VideoBuilder:
                     filter_complex = f"[0:v]scale=1296:2304,crop={self.width}:{self.height}:'(in_w-out_w)/2':'(in_h-out_h)/2 + (in_h-out_h)/3 * sin(2*3.14159*t/12)'[v]"
                     map_audio = "1:a"
             else:
-                logger.info(f"Standardizing segment {idx}: looping & scaling video -> {output_segment_path}")
+                logger.info(f"Standardizing segment {idx}: looping, scaling & adding professional pan/zoom to video -> {output_segment_path}")
                 cmd = [
                     "ffmpeg", "-y",
                     "-stream_loop", "-1",         # Loop input video infinitely
                     "-i", str(clip_path),
                     "-i", str(audio_path)
                 ]
+                scale_w = int(1.15 * self.width)
+                scale_h = int(1.15 * self.height)
                 if has_whoosh:
                     cmd.extend(["-i", str(whoosh_path)])
                     filter_complex = (
-                        f"[0:v]scale={self.width}:{self.height}:force_original_aspect_ratio=increase,"
-                        f"crop={self.width}:{self.height}[v];"
+                        f"[0:v]scale={scale_w}:{scale_h}:force_original_aspect_ratio=increase,"
+                        f"crop={self.width}:{self.height}:'(in_w-out_w)/2 + (in_w-out_w)/2 * sin(2*3.14159*t/10)':'(in_h-out_h)/2 + (in_h-out_h)/2 * cos(2*3.14159*t/10)'[v];"
                         f"[2:a]volume=0.25[w];[1:a][w]amix=inputs=2:duration=first[a]"
                     )
                     map_audio = "[a]"
                 else:
                     filter_complex = (
-                        f"[0:v]scale={self.width}:{self.height}:force_original_aspect_ratio=increase,"
-                        f"crop={self.width}:{self.height}[v]"
+                        f"[0:v]scale={scale_w}:{scale_h}:force_original_aspect_ratio=increase,"
+                        f"crop={self.width}:{self.height}:'(in_w-out_w)/2 + (in_w-out_w)/2 * sin(2*3.14159*t/10)':'(in_h-out_h)/2 + (in_h-out_h)/2 * cos(2*3.14159*t/10)'[v]"
                     )
                     map_audio = "1:a"
 
@@ -114,6 +116,7 @@ class VideoBuilder:
                 "-map", map_audio,
                 "-t", str(duration),
                 "-c:v", "libx264",
+                "-preset", "superfast",          # Speed up encoding by 3-5x
                 "-c:a", "aac",
                 "-pix_fmt", "yuv420p",
                 "-r", str(self.fps),
@@ -247,6 +250,7 @@ class VideoBuilder:
             "-i", video_filename,
             "-vf", f"subtitles={srt_filename}:force_style='{font_style}'",
             "-c:v", "libx264",
+            "-preset", "superfast",           # Speed up encoding by 3-5x
             "-c:a", "copy",                   # Audio is already mixed, copy it
             "-pix_fmt", "yuv420p",
             output_path
