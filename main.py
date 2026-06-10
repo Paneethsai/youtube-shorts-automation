@@ -203,7 +203,7 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="YouTube Daily Shorts & Long-form Automation System")
     parser.add_argument("--topic", type=str, default=None, help="Custom topic to write video script on")
-    parser.add_argument("--privacy", type=str, default="private", choices=["private", "unlisted", "public"], help="YouTube video privacy status")
+    parser.add_argument("--privacy", type=str, default=os.getenv("PRIVACY_STATUS", "public"), choices=["private", "unlisted", "public"], help="YouTube video privacy status")
     parser.add_argument("--format", type=str, default="short", choices=["short", "long"], help="Video format: short (1080x1920) or long (1920x1080)")
     
     args = parser.parse_args()
