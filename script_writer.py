@@ -32,86 +32,86 @@ class ScriptWriter:
 
         if format_type == "long":
             prompt = f"""
-Create a highly engaging, relaxing ASMR-style script for a detailed long-form YouTube video (16:9 aspect ratio, 2-3 minutes long) about the following topic: "{topic}".
-The script must be optimized for late-night scrolling, relaxation, and deep interest.
+Create a highly engaging, relaxing, and mind-blowing technology/AI-focused script for a detailed long-form YouTube video (16:9 aspect ratio, 2-3 minutes long) about the following topic: "{topic}".
+The script must be optimized for late-night scrolling, curiosity, and deep interest.
 It MUST contain exactly 12 to 18 distinct segments to ensure the video has sufficient length (2-3 minutes). Each segment narration text must be relatively short (10-14 words max) to allow fast-paced visual cuts between segments.
 
 Include:
-- A soft, whispery, calming hook (first segment).
-- Soothing facts structured as a relaxing story (body).
+- An intriguing, calming hook (first segment). e.g., 'Close your eyes. What if artificial intelligence could read your mind?'
+- Soothing, futuristic facts structured as a cohesive story (body).
 - Gentle calls to action and subscription requests (cta).
-- Visual keywords optimized for satisfying, high-contrast landscape clips (e.g. 'satisfying water drop ripple landscape', 'relaxing green forest stream', 'calm clouds sunset').
+- Visual keywords optimized for satisfying, high-tech landscape clips (e.g. 'satisfying cyberpunk city loop', 'futuristic neon server room', 'abstract digital network animation', 'glowing fiber optics slow motion').
 
 You MUST respond ONLY with a valid JSON object. Do not include any markdown, triple backticks, or explanation.
 The JSON format must match this structure exactly:
 {{
-  "title": "A soothing, high-CTR long-form video title",
+  "title": "An intriguing, high-CTR technology video title",
   "segments": [
     {{
-      "text": "Calming hook (10-12 words max, e.g., 'Take a deep breath. Let us explore the quiet mystery of gravity.')" ,
-      "keywords": "satisfying loop kinetic, relaxing slow motion",
+      "text": "Calming, engaging hook (10-12 words max, e.g., 'Step into the future. Did you know AI is building new worlds?')" ,
+      "keywords": "satisfying loop digital network, glowing neon circuit board",
       "type": "hook"
     }},
     {{
-      "text": "Detailed soothing fact 1 (12-14 words max, e.g., 'Did you know gravity bends light? Creating giant magnifying glasses in space.')" ,
-      "keywords": "nebula space hubble telescope landscape",
+      "text": "Intriguing tech fact 1 (12-14 words max, e.g., 'Supercomputers can now simulate the entire history of the universe in seconds.')" ,
+      "keywords": "digital space galaxy zoom, server glowing lights landscape",
       "type": "body"
     }},
     ... (Add 10-15 more segments of body facts here to reach 12-18 total segments)
   ],
   "seo": {{
-    "title": "ASMR Physics - Soothing gravity facts",
-    "description": "A relaxing long-form ASMR facts video to help you relax and sleep. Subscribe for daily loops.",
-    "tags": ["asmr", "satisfying", "relaxing", "calming", "sleep aid", "long form", "nature", "physics"],
-    "hashtags": ["#asmr", "#satisfying", "#relaxing", "#longform", "#calm"]
+    "title": "Future Tech - Soothing AI & tech facts",
+    "description": "A relaxing and mind-blowing technology facts video about AI, quantum computing, and the future. Subscribe for daily tech loops.",
+    "tags": ["ai", "technology", "artificial intelligence", "tech facts", "futurism", "science", "long form", "satisfying"],
+    "hashtags": ["#ai", "#technology", "#artificialintelligence", "#tech", "#futurism"]
   }}
 }}
 """
         else:
             prompt = f"""
-Create a highly engaging, relaxing ASMR-style script for a fast-paced YouTube Shorts video about the following topic: "{topic}".
-The script must be optimized for late-night scrolling, relaxation, and high viewer retention. It must contain:
-- A soft, whispery, calming hook (first 3 seconds). e.g., 'Shhh... take a breath. Let me tell you a secret about...'
-- Fascinating, satisfying, and relaxing facts structured as a soothing story.
+Create a highly engaging, mind-blowing technology/AI-focused script for a fast-paced YouTube Shorts video about the following topic: "{topic}".
+The script must be optimized for late-night scrolling, quick curiosity, and high viewer retention. It must contain:
+- A soft, intriguing hook (first 3 seconds). e.g., 'What if I told you AI just solved a 50-year-old mystery?'
+- Fascinating, satisfying, and relaxing technology facts structured as a cohesive story.
 - Gentle, low-friction call-to-actions.
-- Visual keywords optimized for satisfying clips (e.g., 'kinetic sand loop', 'satisfying water waves', 'relaxing forest rain', 'slime cutting').
+- Visual keywords optimized for satisfying, futuristic tech clips (e.g., 'neon code scrolling', 'abstract artificial intelligence brain glowing', 'satisfying holographic UI loop').
 
 You MUST respond ONLY with a valid JSON object. Do not include any markdown, triple backticks, or explanation.
 The JSON format must match this structure exactly:
 {{
-  "title": "A calming, intriguing YouTube Shorts title (under 60 characters)",
+  "title": "A mind-blowing, intriguing YouTube Shorts title (under 60 characters)",
   "segments": [
     {{
-      "text": "Calming, soft whispery hook (keep it short, 10-12 words max, e.g., 'Close your eyes. Relax. Did you know that...')" ,
-      "keywords": "satisfying kinetic sand cutting, relaxing loops",
+      "text": "Intriguing hook (keep it short, 10-12 words max, e.g., 'Wait. What if technology is advancing faster than we think?')" ,
+      "keywords": "neon code background satisfying, digital hologram floating",
       "type": "hook"
     }},
     {{
-      "text": "Soothing fact segment 1 (10-12 words max, e.g., 'Deep in the quietest forest on Earth, you can hear...')" ,
-      "keywords": "calm foggy forest, slow motion rain drops",
+      "text": "Mind-blowing tech fact 1 (10-12 words max, e.g., 'Scientists just programmed a microscopic computer made entirely of DNA.')" ,
+      "keywords": "glowing dna double helix slow motion, futuristic science lab",
       "type": "body"
     }},
     {{
-      "text": "Soothing fact segment 2 (10-12 words max, e.g., 'It sounds just like soft whispers in the wind.')" ,
-      "keywords": "gentle wind blowing leaves, relaxing nature",
+      "text": "Mind-blowing tech fact 2 (10-12 words max, e.g., 'It can solve math equations inside a single human cell.')" ,
+      "keywords": "microscopic zoom cells, abstract digital grid lines",
       "type": "body"
     }},
     {{
-      "text": "Relaxing engagement question (10-12 words max, e.g., 'Tell me in a whisper, have you ever been here?')" ,
-      "keywords": "satisfying macro water drops, slow ripple",
+      "text": "Intriguing engagement question (10-12 words max, e.g., 'Would you let an AI computer run inside your body?')" ,
+      "keywords": "satisfying quantum computer motherboard, gold wires",
       "type": "retention_point"
     }},
     {{
-      "text": "Gentle subscription CTA (10-12 words max, e.g., 'Subscribe for more daily moments of calm.')" ,
-      "keywords": "soft candle glow, slow flame animation",
+      "text": "Gentle subscription CTA (10-12 words max, e.g., 'Subscribe to stay ahead of the future, daily.')" ,
+      "keywords": "soft neon subscribe button glow, cyberpunk aesthetic",
       "type": "cta"
     }}
   ],
   "seo": {{
-    "title": "ASMR Facts - Soothing title",
-    "description": "A relaxing daily ASMR fact video to calm your mind. Subscribe for daily loops.",
-    "tags": ["asmr", "satisfying", "relaxing", "calming", "sleep aid", "oddly satisfying", "shorts"],
-    "hashtags": ["#asmr", "#satisfying", "#relaxing", "#shorts", "#calm"]
+    "title": "AI Facts - Tech Shorts",
+    "description": "Fascinating daily technology and artificial intelligence facts. Subscribe for daily future loops.",
+    "tags": ["ai", "technology", "artificial intelligence", "tech facts", "futurism", "science", "shorts"],
+    "hashtags": ["#ai", "#technology", "#artificialintelligence", "#tech", "#shorts"]
   }}
 }}
 """

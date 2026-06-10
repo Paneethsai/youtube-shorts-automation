@@ -63,8 +63,8 @@ class TrendFinder:
         return trends
 
     def get_reddit_trends(self):
-        """Fetches trends from interesting, fact-focused subreddits."""
-        subreddits = ["todayilearned", "interestingasfuck", "space", "popular"]
+        """Fetches trends from technology, AI, and futurology subreddits."""
+        subreddits = ["technology", "artificial", "singularity", "futurology", "chatgpt"]
         trends = []
         namespaces = {'atom': 'http://www.w3.org/2005/Atom'}
         
@@ -79,8 +79,8 @@ class TrendFinder:
                     title_text = title.text if title is not None else ""
                     cat_text = category.attrib.get('label', '') if category is not None else "General"
                     
-                    # Score highly interesting channels higher to prioritize them
-                    score = 45 if sub in ["todayilearned", "interestingasfuck", "space"] else 30
+                    # Score tech and AI channels higher to prioritize them
+                    score = 45 if sub in ["technology", "artificial", "singularity", "chatgpt"] else 30
                     
                     trends.append({
                         "title": title_text,
@@ -92,8 +92,8 @@ class TrendFinder:
         return trends
 
     def get_news_trends(self):
-        """Fetches global news from BBC News RSS."""
-        url = "http://feeds.bbci.co.uk/news/rss.xml"
+        """Fetches global technology news from BBC Technology RSS."""
+        url = "http://feeds.bbci.co.uk/news/technology/rss.xml"
         root = self.fetch_rss_feed(url)
         trends = []
         if root is not None:
@@ -107,8 +107,8 @@ class TrendFinder:
                 trends.append({
                     "title": title_text,
                     "description": desc_text,
-                    "traffic": "Breaking News",
-                    "source": "News RSS",
+                    "traffic": "Breaking Tech News",
+                    "source": "BBC Tech News",
                     "score": 20  # Base news score
                 })
         return trends
