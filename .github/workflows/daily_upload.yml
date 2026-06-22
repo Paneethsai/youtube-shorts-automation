@@ -73,6 +73,6 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add used_topics.txt
+          git add -f used_topics.txt
           git commit -m "Update used topics history [skip ci]" || echo "No changes to commit"
           git push origin main
