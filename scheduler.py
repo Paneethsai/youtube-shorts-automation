@@ -1,3 +1,5 @@
+import os
+import sys
 import time
 import logging
 import schedule
@@ -59,10 +61,11 @@ def main():
     schedule.every().day.at(shorts_time).do(run_shorts_job)
     schedule.every().day.at(long_time).do(run_long_job)
     
-    # Run once immediately on startup to verify setup is working
-    logger.info("Running initial pipeline check (generating both formats)...")
-    run_shorts_job()
-    run_long_job()
+    # Run once immediately on startup if --now is specified
+    if "--now" in sys.argv:
+        logger.info("Running initial pipeline check (generating both formats)...")
+        run_shorts_job()
+        run_long_job()
     
     while True:
         try:
@@ -76,5 +79,4 @@ def main():
             time.sleep(30) # pause before retrying loop
 
 if __name__ == "__main__":
-    import os
     main()

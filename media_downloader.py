@@ -53,26 +53,39 @@ class MediaDownloader:
                     selected_video = random.choice(videos[:3])
                     video_files = selected_video.get("video_files", [])
                     
-                    # Try to find a file matching resolution/orientation
-                    best_file = None
+                    # Sort files to prioritize HD/UHD and correct aspect ratio
+                    matched_files = []
                     for vf in video_files:
                         if vf.get("file_type") == "video/mp4":
-                            # Prioritize match on aspect ratio
-                            w = vf.get("width")
-                            h = vf.get("height")
-                            if w and h:
-                                if orientation == "portrait" and h > w:
-                                    best_file = vf
-                                    break
-                                elif orientation == "landscape" and w > h:
-                                    best_file = vf
-                                    break
+                            w = vf.get("width") or 0
+                            h = vf.get("height") or 0
+                            quality = (vf.get("quality") or "sd").lower()
+                            
+                            # Check if aspect ratio matches orientation
+                            aspect_match = False
+                            if orientation == "portrait" and h > w:
+                                aspect_match = True
+                            elif orientation == "landscape" and w > h:
+                                aspect_match = True
+                                
+                            # Score the file:
+                            # +10 points for matching aspect ratio
+                            # +5 points for HD/UHD quality
+                            # +3 points for height >= 720
+                            score = 0
+                            if aspect_match:
+                                score += 10
+                            if quality in ["hd", "uhd"]:
+                                score += 5
+                            if h >= 720 or w >= 1280:
+                                score += 3
+                            
+                            matched_files.append((score, vf))
                     
-                    # Fallback to first MP4 if no perfect aspect ratio match
-                    if not best_file and video_files:
-                        best_file = next((vf for vf in video_files if vf.get("file_type") == "video/mp4"), None)
-                        
-                    if best_file:
+                    if matched_files:
+                        # Sort by score descending and return the link of the best one
+                        matched_files.sort(key=lambda x: x[0], reverse=True)
+                        best_file = matched_files[0][1]
                         return best_file.get("link", "")
             else:
                 logger.error(f"Pexels search API failed: {response.status_code} - {response.text}")
@@ -138,9 +151,13 @@ class MediaDownloader:
             duration = segment.get("duration", 5.0)
             dest_video_path = temp_dir / f"clip_{idx}.mp4"
             
-            # Extract first keyword/tag to search
+            # Clean and sanitize keyword search query
             kw_list = [k.strip() for k in keywords.split(",") if k.strip()]
             search_query = kw_list[0] if kw_list else config.NICHE
+            # Limit search query to 2 words max to keep searches on Pexels simple and successful
+            words = search_query.split()
+            if len(words) > 2:
+                search_query = " ".join(words[:2])
             
             download_success = False
             video_url = ""

@@ -59,7 +59,18 @@ VIDEO_HEIGHT = int(os.getenv("VIDEO_HEIGHT", "1920")) # Default: YouTube Shorts 
 VIDEO_FPS = int(os.getenv("VIDEO_FPS", "30"))
 
 # Automation Niche (can be customized)
-NICHE = os.getenv("NICHE", "interesting facts")
+NICHES = [
+    "Personal Finance & AI Tools (focused on Indian fintech apps, UPI, savings hacks)",
+    "Indian Crisis & Collapse Stories (cost-of-living, unemployment, infrastructure issues)",
+    "Volcano & Disaster Explainers (global + Indian floods, cyclones, earthquakes)",
+    "Luxury Mansions & Castles Documentaries (Indian palaces, forts, heritage sites)",
+    "Sleep & Relaxation Stories (mythology, Indian folk tales, calming narrations)",
+    "Productivity & Study Tips (exam prep, UPSC/SSC/JEE hacks, student routines)",
+    "Travel Guides & Localized Problem Stories (Indian cities, tourism + local challenges)",
+    "Software Tutorials & Automation Tools (AI tools, coding tutorials, Indian tech context)",
+    "YouTube Shorts (Indian facts, mini tutorials, trending cultural snippets)"
+]
+NICHE = os.getenv("NICHE", NICHES[0])
 
 # OpenAI/OpenRouter model setup
 # We will use google/gemini-2.5-flash which is free on OpenRouter

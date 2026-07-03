@@ -66,11 +66,29 @@ class VoiceGenerator:
             logger.error(f"Error running Piper: {e}")
             return False
 
+    def generate_voice_edge_sync(self, text: str, output_path: str) -> bool:
+        """Generates highly realistic neural human-like voice using Microsoft Edge TTS."""
+        try:
+            import asyncio
+            import edge_tts
+            logger.info(f"Generating neural human voice with Edge TTS (en-IN-Neerja): '{text[:30]}...' -> {output_path}")
+            
+            # Select Neerja for a natural Indian English female tone
+            voice = "en-IN-NeerjaNeural"
+            
+            asyncio.run(edge_tts.Communicate(text, voice).save(output_path))
+            logger.info("Edge TTS neural voice generation successful.")
+            return True
+        except Exception as e:
+            logger.error(f"Error running Edge TTS: {e}")
+            return False
+
     def generate_voice_gtts(self, text: str, output_path: str) -> bool:
         """Generates audio file using Google Text-to-Speech (gTTS)."""
         try:
             logger.info(f"Generating voice with gTTS: '{text[:30]}...' -> {output_path}")
-            tts = gTTS(text=text, lang='en', slow=False)
+            # Use 'co.in' TLD for a natural Indian English accent
+            tts = gTTS(text=text, lang='en', tld='co.in', slow=False)
             tts.save(output_path)
             logger.info("gTTS voice generation successful.")
             return True
@@ -84,7 +102,8 @@ class VoiceGenerator:
         with paths to the audio files and their durations.
         """
         updated_segments = []
-        use_piper = self.is_piper_available()
+        # Bypass American Piper model if Indian accent is requested
+        use_piper = self.is_piper_available() and os.getenv("USE_INDIAN_ACCENT", "true").lower() != "true"
         
         # Audio library like wave or ffprobe can be used to read duration.
         # But we can also get duration from FFmpeg metadata or a quick ffprobe run.
@@ -97,9 +116,13 @@ class VoiceGenerator:
             if use_piper:
                 success = self.generate_voice_piper(text, str(audio_path))
             
-            # If Piper failed or is not available, fall back to gTTS
+            # 1. Try human-like neural Edge TTS first
             if not success:
-                # Force output path to .mp3 for gTTS
+                audio_path = temp_dir / f"segment_{idx}.mp3"
+                success = self.generate_voice_edge_sync(text, str(audio_path))
+                
+            # 2. Fall back to standard gTTS if Edge TTS fails
+            if not success:
                 audio_path = temp_dir / f"segment_{idx}.mp3"
                 success = self.generate_voice_gtts(text, str(audio_path))
                 

@@ -26,8 +26,8 @@ class TrendFinder:
         return None
 
     def get_google_trends(self):
-        """Fetches Google Trends daily search trends for the US."""
-        url = "https://trends.google.com/trends/trendingsearches/daily/rss?geo=US"
+        """Fetches Google Trends daily search trends for India."""
+        url = "https://trends.google.com/trends/trendingsearches/daily/rss?geo=IN"
         root = self.fetch_rss_feed(url)
         trends = []
         if root is not None:

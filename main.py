@@ -95,34 +95,45 @@ class AutomationPipeline:
         try:
             # Step 1: Trend Discovery
             if not target_topic:
-                logger.info("Discovering trending topics...")
-                trends = self.trend_finder.get_combined_trends()
-                used_topics = self.load_used_topics()
-                normalized_used = {self.normalize_topic(t) for t in used_topics}
+                import random
+                import requests
+                active_niche = random.choice(config.NICHES)
+                logger.info(f"Selected Indian Niche: '{active_niche}'")
                 
-                selected_trend = None
-                if trends:
-                    for trend in trends:
-                        norm_title = self.normalize_topic(trend["title"])
-                        if norm_title not in normalized_used:
-                            selected_trend = trend
-                            break
-                    
-                    if selected_trend:
-                        target_topic = selected_trend["title"]
-                        logger.info(f"Selected new trend topic: '{target_topic}' (Source: {selected_trend['source']})")
+                # Attempt to brainstorm a topic under this niche via LLM for an Indian audience
+                try:
+                    brainstorm_prompt = f"""
+Brainstorm a single, highly engaging, trending video topic under the niche '{active_niche}' specifically for an Indian audience.
+Respond with ONLY the topic name (under 10 words, no quotes, no introduction, e.g. 'How UPI auto-debits secretly drain your bank account').
+"""
+                    headers = {
+                        "Authorization": f"Bearer {self.script_writer.api_key}",
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": "https://github.com/google/antigravity",
+                        "X-Title": "Antigravity YouTube Automation"
+                    }
+                    data = {
+                        "model": self.script_writer.model,
+                        "messages": [{"role": "user", "content": brainstorm_prompt}],
+                        "max_tokens": 50
+                    }
+                    logger.info("Brainstorming a localized topic via LLM...")
+                    response = requests.post(f"{self.script_writer.base_url}/chat/completions", headers=headers, json=data, timeout=15)
+                    if response.status_code == 200:
+                        result = response.json()
+                        brainstormed_topic = result['choices'][0]['message']['content'].strip().strip('"\'')
+                        if brainstormed_topic and len(brainstormed_topic.split()) < 15:
+                            target_topic = brainstormed_topic
+                            logger.info(f"Brainstormed Topic: '{target_topic}'")
                     else:
-                        target_topic = config.NICHE
-                        logger.warning("All discovered trending topics have already been used. Falling back to niche.")
-                else:
-                    target_topic = config.NICHE
-                    logger.warning("No trends found. Falling back to niche.")
+                        logger.warning(f"Brainstorming API call failed with code {response.status_code}. Using niche as target topic.")
+                except Exception as e:
+                    logger.warning(f"Brainstorming failed: {e}. Using niche as target topic.")
                 
-                # Make fallback niche unique by appending the current date
-                if target_topic == config.NICHE:
-                    date_str = datetime.now().strftime("%B %d, %Y")
-                    target_topic = f"{config.NICHE} for {date_str}"
-                    logger.info(f"Using unique daily niche topic: '{target_topic}'")
+                if not target_topic:
+                    # Fallback directly to the niche name, which maps to premium local templates
+                    target_topic = active_niche
+                    logger.info(f"Using niche name as target topic: '{target_topic}'")
             else:
                 logger.info(f"Using user-defined topic: '{target_topic}'")
 

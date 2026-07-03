@@ -32,15 +32,15 @@ class ScriptWriter:
 
         if format_type == "long":
             prompt = f"""
-Create a highly engaging, relaxing, and mind-blowing technology/AI-focused script for a detailed long-form YouTube video (16:9 aspect ratio, 2-3 minutes long) about the following topic: "{topic}".
-The script must be optimized for late-night scrolling, curiosity, and deep interest.
+Create a highly engaging, relaxing, and mind-blowing script for a detailed long-form YouTube video (16:9 aspect ratio, 2-3 minutes long) about the following topic: "{topic}".
+The script must be specifically tailored for an Indian audience, using Indian cultural contexts, local examples, currency, or references where applicable.
 It MUST contain exactly 12 to 18 distinct segments to ensure the video has sufficient length (2-3 minutes). Each segment narration text must be relatively short (10-14 words max) to allow fast-paced visual cuts between segments.
 
 Include:
-- An intriguing, calming hook (first segment). e.g., 'Close your eyes. What if artificial intelligence could read your mind?'
+- An intriguing, calming hook (first segment) relevant to India or the topic.
 - Soothing, futuristic facts structured as a cohesive story (body).
 - Gentle calls to action and subscription requests (cta).
-- Visual keywords optimized for satisfying, high-tech landscape clips (e.g. 'satisfying cyberpunk city loop', 'futuristic neon server room', 'abstract digital network animation', 'glowing fiber optics slow motion').
+- Visual keywords optimized for Pexels search. You MUST write only 1-2 simple, concrete physical nouns (e.g. 'palace', 'monsoon', 'wallet', 'computer', 'rain') as keywords to ensure Pexels searches return high-quality matching video clips. Do not use abstract sentences or complex phrases.
 
 You MUST respond ONLY with a valid JSON object. Do not include any markdown, triple backticks, or explanation.
 The JSON format must match this structure exactly:
@@ -69,12 +69,13 @@ The JSON format must match this structure exactly:
 """
         else:
             prompt = f"""
-Create a highly engaging, mind-blowing technology/AI-focused script for a fast-paced YouTube Shorts video about the following topic: "{topic}".
-The script must be optimized for late-night scrolling, quick curiosity, and high viewer retention. It must contain:
-- A soft, intriguing hook (first 3 seconds). e.g., 'What if I told you AI just solved a 50-year-old mystery?'
-- Fascinating, satisfying, and relaxing technology facts structured as a cohesive story.
+Create a highly engaging, mind-blowing script for a fast-paced YouTube Shorts video about the following topic: "{topic}".
+The script must be specifically tailored for an Indian audience, using Indian cultural contexts, local examples, currency, or references where applicable.
+The script must be optimized for quick curiosity and high viewer retention. It must contain:
+- A soft, intriguing hook (first 3 seconds).
+- Fascinating, satisfying, and relaxing facts structured as a cohesive story.
 - Gentle, low-friction call-to-actions.
-- Visual keywords optimized for satisfying, futuristic tech clips (e.g., 'neon code scrolling', 'abstract artificial intelligence brain glowing', 'satisfying holographic UI loop').
+- Visual keywords optimized for Pexels search. You MUST write only 1-2 simple, concrete physical nouns (e.g. 'rupees', 'palace', 'cyclone', 'keyboard') as keywords to ensure Pexels searches return high-quality matching video clips. Do not use abstract sentences or complex phrases.
 
 You MUST respond ONLY with a valid JSON object. Do not include any markdown, triple backticks, or explanation.
 The JSON format must match this structure exactly:
@@ -156,6 +157,12 @@ The JSON format must match this structure exactly:
     def _get_fallback_script(self, topic: str, format_type: str = "short") -> dict:
         """Returns a static fallback script if the API is offline."""
         logger.warning(f"Generating a fallback script for {format_type} format.")
+        try:
+            from indian_niches_templates import get_niche_template
+            return get_niche_template(topic, format_type)
+        except Exception as e:
+            logger.error(f"Failed to load indian_niches_templates fallback: {e}")
+            
         if format_type == "long":
             segments = []
             # Generate 12 segments of relaxing facts
