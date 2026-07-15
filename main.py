@@ -137,8 +137,8 @@ Respond with ONLY the topic name (under 10 words, no quotes, no introduction, e.
             else:
                 logger.info(f"Using user-defined topic: '{target_topic}'")
 
-            # Save the topic to our history so we don't repeat it
-            self.save_used_topic(target_topic)
+
+            # Topic will be saved to history at the end of the pipeline after a successful upload
 
             # Step 2: Script Writing
             logger.info("Writing script and SEO metadata...")
@@ -227,8 +227,11 @@ Respond with ONLY the topic name (under 10 words, no quotes, no introduction, e.
                 )
                 if video_id:
                     logger.info(f"Successfully automated video upload! Video URL: https://youtu.be/{video_id}")
+                    self.save_used_topic(target_topic)
+                    return True
                 else:
-                    logger.warning("YouTube Upload completed, but no Video ID was returned.")
+                    logger.error("YouTube Upload failed, no Video ID returned.")
+                    return False
             except Exception as upload_err:
                 logger.error(
                     f"\n------------------------------------------------------\n"
@@ -238,8 +241,7 @@ Respond with ONLY the topic name (under 10 words, no quotes, no introduction, e.
                     f"Setup client_secrets.json to enable automatic uploads next time.\n"
                     f"------------------------------------------------------"
                 )
-
-            return True
+                return False
 
         except Exception as e:
             logger.critical(f"Pipeline crashed during execution: {e}", exc_info=True)
@@ -265,4 +267,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     pipeline = AutomationPipeline()
-    pipeline.run_pipeline(target_topic=args.topic, privacy_status=args.privacy, format_type=args.format)
+    success = pipeline.run_pipeline(target_topic=args.topic, privacy_status=args.privacy, format_type=args.format)
+    if not success:
+        import sys
+        sys.exit(1)
