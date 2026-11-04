@@ -280,3 +280,4 @@ Jio Fiber AI: Automate Bill Pay & Troubleshooting
 UPSC/JEE: Last-Month Strategy for Top Rankers
 Youth Migration: India's Brain Drain Explodes
 AI Auto-Script: Code Indian Food Recipes Fast!
+Build AI UPI Auto-Pay Blocker with Python
